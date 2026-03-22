@@ -1,0 +1,6 @@
+# Ignorar archivos y carpetas innecesarias para Nginx
+.git
+.gitignore
+.dockerignore
+Dockerfile
+.gemini/
