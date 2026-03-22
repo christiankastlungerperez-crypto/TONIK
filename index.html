@@ -12,7 +12,41 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- LOGIN VIEW -->
+    <div id="login-container" style="min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 400px), radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent 400px);">
+        <div class="glass-panel bounce-in" style="width: 100%; max-width: 400px; padding: 40px; text-align: center; border-radius: 20px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <div class="logo">
+                    <i class='bx bx-cube-alt'></i>
+                </div>
+                <h1 style="font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Tonik</h1>
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 32px;">Inicia sesión para acceder al CRM</p>
+            
+            <form id="login-form">
+                <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                    <label for="login-user">Usuario</label>
+                    <input type="text" id="login-user" required placeholder="Ej. admin" style="background: rgba(0,0,0,0.2); padding: 12px; font-size: 15px;" autocomplete="off">
+                </div>
+                <div class="form-group" style="text-align: left; margin-bottom: 24px;">
+                    <label for="login-pass">Contraseña</label>
+                    <input type="password" id="login-pass" required placeholder="••••••••" style="background: rgba(0,0,0,0.2); padding: 12px; font-size: 15px;">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 16px; border-radius: 12px; justify-content: center;">Ingresar al Sistema</button>
+            </form>
+            <div id="login-error" style="color: #ef4444; margin-top: 16px; font-size: 14px; display: none;">Usuario o contraseña incorrectos.</div>
+            
+            <div style="margin-top: 32px; font-size: 12px; color: var(--text-secondary); text-align: left; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                <strong>Credenciales de prueba:</strong><br>
+                Admin: <code>admin</code> / <code>admin123</code><br>
+                Usuario 1: <code>pablo</code> / <code>pablo123</code><br>
+                Usuario 2: <code>sara</code> / <code>sara123</code><br>
+                Usuario 3: <code>alex</code> / <code>alex123</code>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="app-container" style="display: none;">
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
@@ -44,6 +78,7 @@
                         <span class="link-name">Tareas</span>
                     </a>
                 </li>
+
             </ul>
             <div class="profile-card">
                 <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" alt="profile" class="profile-img">
@@ -112,6 +147,9 @@
                     <div class="section-header">
                         <h2>Directorio de Clientes</h2>
                         <div class="filter-actions" style="display: flex; gap: 12px;">
+                            <button class="btn-secondary" onclick="exportCustomersToCSV()" title="Exportar a CSV/Excel" style="display: flex; align-items: center; gap: 6px; padding: 8px 16px;">
+                                <i class='bx bx-export'></i> Exportar
+                            </button>
                             <select id="service-filter" class="custom-select">
                                 <option value="all">Servicios: Todos</option>
                                 <option value="Desarrollo Web">Desarrollo Web</option>
@@ -425,9 +463,12 @@
                     </div>
                 </div> <!-- END TASKS VIEW -->
 
+
+
             </div>
         </main>
     </div>
+    </div> <!-- END APP CONTAINER -->
 
     <!-- Task Modal -->
     <div class="modal-overlay" id="task-modal">

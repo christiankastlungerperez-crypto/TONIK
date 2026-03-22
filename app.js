@@ -69,17 +69,19 @@ let recordings = [
 ];
 
 let currentChannel = "General";
+let currentUser = null;
 
 let chatMessages = [
     { id: 1, sender: "Admin User", initials: "AU", text: "¡Bienvenidos al nuevo espacio de chat del equipo!", time: "09:00", isSelf: true, channel: "General" },
-    { id: 2, sender: "María D.", initials: "MD", text: "Tiene muy buena pinta el calendario de grabaciones.", time: "09:15", isSelf: false, channel: "General" },
-    { id: 3, sender: "Carlos Dev", initials: "CD", text: "Recordad que acabo de subir las contraseñas de Acme Corp.", time: "09:42", isSelf: false, channel: "Desarrollo Web" }
+    { id: 2, sender: "Pablo M.", initials: "PM", text: "Tiene muy buena pinta el calendario de grabaciones.", time: "09:15", isSelf: false, channel: "General" },
+    { id: 3, sender: "Sara L.", initials: "SL", text: "Recordad que acabo de subir las contraseñas de Acme Corp.", time: "09:42", isSelf: false, channel: "Desarrollo Web" }
 ];
 
 let teamUsers = [
-    { id: 1, name: "Admin User", initials: "AU" },
-    { id: 2, name: "María D.", initials: "MD" },
-    { id: 3, name: "Carlos Dev", initials: "CD" }
+    { id: 1, name: "Admin User", initials: "AU", username: "admin", pass: "admin123", role: "admin" },
+    { id: 2, name: "Pablo M.", initials: "PM", username: "pablo", pass: "pablo123", role: "user" },
+    { id: 3, name: "Sara L.", initials: "SL", username: "sara", pass: "sara123", role: "user" },
+    { id: 4, name: "Alex V.", initials: "AV", username: "alex", pass: "alex123", role: "user" }
 ];
 
 let tasksList = [
@@ -116,15 +118,45 @@ const fileInput = document.getElementById('file-upload');
 const filesList = document.getElementById('files-list');
 
 let currentOpenCustomerId = null;
+let currentFilteredCustomers = [...customers];
 
 // Initialization
 function init() {
-    renderTable(customers);
+    currentFilteredCustomers = [...customers];
+    renderTable(currentFilteredCustomers);
     updateStats();
     setupEventListeners();
+    setupLogin();
     
     // Auto-setup current view calendar
     renderCalendar();
+}
+
+function setupLogin() {
+    const loginForm = document.getElementById('login-form');
+    if(!loginForm) return;
+    
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const uInput = document.getElementById('login-user').value.trim();
+        const pInput = document.getElementById('login-pass').value.trim();
+        
+        const validUser = teamUsers.find(u => u.username === uInput && u.pass === pInput);
+        if (validUser) {
+            currentUser = validUser;
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            
+            // Profile image update
+            const profileImg = document.querySelector('.profile-card img');
+            if(profileImg) profileImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(validUser.name)}&background=6366f1&color=fff`;
+            
+
+            
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    });
 }
 
 function switchView(viewName) {
@@ -248,8 +280,8 @@ function setupEventListeners() {
             
             chatMessages.push({
                 id: Date.now(),
-                sender: "Admin User",
-                initials: "AU",
+                sender: currentUser ? currentUser.name : "Admin User",
+                initials: currentUser ? currentUser.initials : "AU",
                 text: input.value.trim(),
                 time: timeStr,
                 isSelf: true,
@@ -336,6 +368,7 @@ function filterData() {
         return matchesSearch && matchesStatus && matchesService;
     });
 
+    currentFilteredCustomers = filtered;
     renderTable(filtered);
 }
 
@@ -670,7 +703,7 @@ function renderChat() {
     }
     
     feed.innerHTML = messages.map(msg => `
-        <div class="chat-message ${msg.isSelf ? 'self' : ''}">
+        <div class="chat-message ${msg.isSelf || (currentUser && msg.sender === currentUser.name) ? 'self' : ''}">
             <div class="chat-avatar">${msg.initials}</div>
             <div>
                 <div class="chat-meta">
@@ -808,6 +841,36 @@ window.deleteCustomer = function(id) {
         filterData();
     }
 }
+
+// Export to CSV
+window.exportCustomersToCSV = function() {
+    const headers = ["Cliente", "Empresa", "Contacto", "Servicio", "Estado", "Tipo"];
+    
+    const rows = currentFilteredCustomers.map(c => [
+        `"${c.name} - ${c.email}"`, 
+        `"${c.company}"`,
+        `"${c.phone}"`,
+        `"${c.service}"`,
+        `"${c.status}"`,
+        `"${c.type}"`
+    ]);
+    
+    // UTF-8 BOM para que Excel detecte tildes correctamente
+    let csvContent = "\uFEFF" + headers.join(";") + "\n";
+    rows.forEach(row => {
+        csvContent += row.join(";") + "\n";
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `clientes_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
 
 // Start app
 document.addEventListener('DOMContentLoaded', init);
