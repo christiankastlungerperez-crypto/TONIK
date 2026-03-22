@@ -90,6 +90,22 @@ let tasksList = [
     { id: 3, title: "Actualizar base de datos MySQL", assigneeId: 3, status: "done", priority: "baja", dueDate: "2026-03-20", clientId: 4, file: null }
 ];
 
+function loadData() {
+    const sC = localStorage.getItem('crm_customers'); if(sC) customers = JSON.parse(sC);
+    const sR = localStorage.getItem('crm_recordings'); if(sR) recordings = JSON.parse(sR);
+    const sCh = localStorage.getItem('crm_chatMessages'); if(sCh) chatMessages = JSON.parse(sCh);
+    const sT = localStorage.getItem('crm_tasksList'); if(sT) tasksList = JSON.parse(sT);
+}
+
+function saveData() {
+    localStorage.setItem('crm_customers', JSON.stringify(customers));
+    localStorage.setItem('crm_recordings', JSON.stringify(recordings));
+    localStorage.setItem('crm_chatMessages', JSON.stringify(chatMessages));
+    localStorage.setItem('crm_tasksList', JSON.stringify(tasksList));
+}
+
+loadData();
+
 // DOM Elements
 const tableBody = document.getElementById('customers-table-body');
 const totalStat = document.getElementById('stat-total');
@@ -289,6 +305,7 @@ function setupEventListeners() {
             });
             
             input.value = '';
+            saveData();
             renderChat();
         });
     }
@@ -346,6 +363,7 @@ function setupEventListeners() {
             }
 
             closeTaskModal();
+            saveData();
             renderTasks();
         });
     }
@@ -485,6 +503,7 @@ function handleFormSubmit(e) {
         customers.unshift(newCustomer);
     }
 
+    saveData();
     switchView('dashboard');
     updateStats();
     // Re-apply filters before rendering
@@ -510,6 +529,7 @@ function addComment() {
             text: text
         });
         newCommentInput.value = '';
+        saveData();
         renderComments(currentOpenCustomerId);
     }
 }
@@ -547,6 +567,7 @@ function addFile(e) {
             });
         });
         
+        saveData();
         renderFiles(currentOpenCustomerId);
         e.target.value = ''; // reset
     }
@@ -670,6 +691,7 @@ function handleRecordingSubmit(e) {
         type: type
     });
 
+    saveData();
     closeRecordingModal();
     renderCalendar();
 }
@@ -777,6 +799,7 @@ window.drop = function(ev, newStatus) {
     const task = tasksList.find(t => t.id == parseInt(taskId));
     if(task) {
         task.status = newStatus;
+        saveData();
         renderTasks();
     }
 }
@@ -824,6 +847,7 @@ window.closeTaskModal = function() {
 window.deleteTask = function(id) {
     if(confirm('¿Seguro que deseas eliminar esta tarea?')) {
         tasksList = tasksList.filter(t => t.id !== parseInt(id));
+        saveData();
         renderTasks();
     }
 }
@@ -837,6 +861,7 @@ window.editCustomer = function(id) {
 window.deleteCustomer = function(id) {
     if(confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
         customers = customers.filter(c => c.id !== id);
+        saveData();
         updateStats();
         filterData();
     }
