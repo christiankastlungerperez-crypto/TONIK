@@ -90,21 +90,29 @@ let tasksList = [
     { id: 3, title: "Actualizar base de datos MySQL", assigneeId: 3, status: "done", priority: "baja", dueDate: "2026-03-20", clientId: 4, file: null }
 ];
 
-function loadData() {
-    const sC = localStorage.getItem('crm_customers'); if(sC) customers = JSON.parse(sC);
-    const sR = localStorage.getItem('crm_recordings'); if(sR) recordings = JSON.parse(sR);
-    const sCh = localStorage.getItem('crm_chatMessages'); if(sCh) chatMessages = JSON.parse(sCh);
-    const sT = localStorage.getItem('crm_tasksList'); if(sT) tasksList = JSON.parse(sT);
+async function loadData() {
+    try {
+        const res = await fetch('http://localhost:3000/api/data');
+        const data = await res.json();
+        if (data.customers) customers = data.customers;
+        if (data.recordings) recordings = data.recordings;
+        if (data.chatMessages) chatMessages = data.chatMessages;
+        if (data.tasksList) tasksList = data.tasksList;
+    } catch(e) {
+        console.error("No se pudo conectar a la base de datos (SQLite / Node). Asegúrate de tener el servidor encendido.", e);
+    }
 }
 
-function saveData() {
-    localStorage.setItem('crm_customers', JSON.stringify(customers));
-    localStorage.setItem('crm_recordings', JSON.stringify(recordings));
-    localStorage.setItem('crm_chatMessages', JSON.stringify(chatMessages));
-    localStorage.setItem('crm_tasksList', JSON.stringify(tasksList));
+async function saveData() {
+    try {
+        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_customers', data: customers }) });
+        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_recordings', data: recordings }) });
+        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_chatMessages', data: chatMessages }) });
+        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_tasksList', data: tasksList }) });
+    } catch(e) {
+        console.error("Error al guardar en base de datos SQLite.", e);
+    }
 }
-
-loadData();
 
 // DOM Elements
 const tableBody = document.getElementById('customers-table-body');
@@ -681,6 +689,7 @@ function handleRecordingSubmit(e) {
     const time = document.getElementById('rec-time').value;
     const duration = document.getElementById('rec-duration').value;
     const type = document.getElementById('rec-type').value;
+    const email = document.getElementById('rec-email').value;
 
     recordings.push({
         id: Date.now(),
@@ -688,12 +697,17 @@ function handleRecordingSubmit(e) {
         date: date,
         time: time,
         duration: duration,
-        type: type
+        type: type,
+        email: email
     });
 
     saveData();
     closeRecordingModal();
     renderCalendar();
+
+    if(email) {
+        alert(`✅ Correo de aviso programado con éxito:\n\nPara: ${email}\nAsunto: Nueva grabación asignada\nFecha: ${date} a las ${time}\nTipo: ${type}`);
+    }
 }
 
 // --- CHAT LOGIC ---
@@ -898,4 +912,7 @@ window.exportCustomersToCSV = function() {
 };
 
 // Start app
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadData();
+    init();
+});
