@@ -574,6 +574,9 @@ function handleFormSubmit(e) {
     let existingCustomer = null;
     if(id) existingCustomer = customers.find(c => c.id === parseInt(id));
 
+    const emailNotice = document.getElementById('customer-email-notice').value;
+    const waNotice = document.getElementById('customer-wa-notice').value;
+
     const newCustomer = {
         id: id ? parseInt(id) : Date.now(),
         name: document.getElementById('name').value,
@@ -605,9 +608,6 @@ function handleFormSubmit(e) {
         emailNotice: emailNotice
     };
 
-    const emailNotice = document.getElementById('customer-email-notice').value;
-    const waNotice = document.getElementById('customer-wa-notice').value;
-
     if (id) {
         // Edit
         const index = customers.findIndex(c => c.id === parseInt(id));
@@ -623,22 +623,27 @@ function handleFormSubmit(e) {
     // Re-apply filters before rendering
     filterData();
 
-    if(!id && (emailNotice || waNotice)) {
+    if(!id && emailNotice) {
+        // Enviar al nuevo backend Python (Flask) en el puerto 8000
+        fetch('http://localhost:8000/nuevo_cliente', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                nombre: newCustomer.name, 
+                email: emailNotice 
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log('Respuesta del servidor Python:', data))
+        .catch(err => console.error('Error conectando al servidor Python:', err));
+    }
+    if(!id && waNotice) {
         let msg = `Email de Bienvenida:\n\nCliente: ${newCustomer.name}\nEmpresa: ${newCustomer.company}\nServicio: ${newCustomer.service}`;
-        if(emailNotice) {
-            fetch('/api/send-email', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to: emailNotice, subject: 'Bienvenido al CRM', body: msg })
-            });
-        }
-        if(waNotice) {
-            fetch('/api/send-whatsapp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to: waNotice, message: msg })
-            });
-        }
+        fetch('/api/send-whatsapp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ to: waNotice, message: msg })
+        });
     }
 }
 
