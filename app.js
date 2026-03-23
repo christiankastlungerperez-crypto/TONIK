@@ -269,7 +269,12 @@ function renderTable(data) {
                     <div class="client-cell">
                         <div class="client-avatar">${getInitials(customer.name)}</div>
                         <div class="client-info">
-                            <div class="name">${customer.name}</div>
+                            <div class="name">
+                                ${customer.name}
+                                <a href="https://wa.me/${customer.phone.replace(/\D/g, '')}" target="_blank" title="Contactar por WhatsApp" style="color:#25d366; font-size:16px; margin-left:8px;">
+                                    <i class='bx bxl-whatsapp'></i>
+                                </a>
+                            </div>
                             <div class="email">${customer.email}</div>
                         </div>
                     </div>
@@ -369,6 +374,7 @@ function setupEventListeners() {
             const status = document.getElementById('task-status').value;
             const editId = document.getElementById('edit-task-id').value;
             const emailNotice = document.getElementById('task-email-notice').value;
+            const waNotice = document.getElementById('task-wa-notice').value;
             
             let fileObj = null;
             if(fileInput.files.length > 0) {
@@ -414,10 +420,25 @@ function setupEventListeners() {
             saveData();
             renderTasks();
 
-            if(emailNotice) {
+            if(emailNotice || waNotice) {
                 const assignee = teamUsers.find(u => u.id === parseInt(assigneeId));
                 const assigneeName = assignee ? assignee.name : 'Responsable';
-                alert(`📧 Recordatorio de Tarea programado:\n\nPara: ${emailNotice}\nResponsable: ${assigneeName}\nTarea: ${title}\nFecha Límite: ${dueDate}`);
+                let msg = `Recordatorio de Tarea:\n\nResponsable: ${assigneeName}\nTarea: ${title}\nFecha Límite: ${dueDate}`;
+                
+                if(emailNotice) {
+                    fetch('/api/send-email', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ to: emailNotice, subject: 'Recordatorio de Tarea', body: msg })
+                    });
+                }
+                if(waNotice) {
+                    fetch('/api/send-whatsapp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ to: waNotice, message: msg })
+                    });
+                }
             }
         });
     }
@@ -507,6 +528,7 @@ function openCustomerView(customer = null) {
         notesWarning.classList.remove('hidden');
         notesSection.classList.add('hidden');
         document.getElementById('customer-email-notice').value = '';
+        document.getElementById('customer-wa-notice').value = '';
     }
     
     switchView('customer');
@@ -551,6 +573,7 @@ function handleFormSubmit(e) {
     };
 
     const emailNotice = document.getElementById('customer-email-notice').value;
+    const waNotice = document.getElementById('customer-wa-notice').value;
 
     if (id) {
         // Edit
@@ -567,8 +590,22 @@ function handleFormSubmit(e) {
     // Re-apply filters before rendering
     filterData();
 
-    if(!id && emailNotice) {
-        alert(`📧 Email de Bienvenida programado:\n\nPara: ${emailNotice}\nCliente: ${newCustomer.name}\nEmpresa: ${newCustomer.company}\nServicio: ${newCustomer.service}`);
+    if(!id && (emailNotice || waNotice)) {
+        let msg = `Email de Bienvenida:\n\nCliente: ${newCustomer.name}\nEmpresa: ${newCustomer.company}\nServicio: ${newCustomer.service}`;
+        if(emailNotice) {
+            fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: emailNotice, subject: 'Bienvenido al CRM', body: msg })
+            });
+        }
+        if(waNotice) {
+            fetch('/api/send-whatsapp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: waNotice, message: msg })
+            });
+        }
     }
 }
 
@@ -744,6 +781,7 @@ function handleRecordingSubmit(e) {
     const duration = document.getElementById('rec-duration').value;
     const type = document.getElementById('rec-type').value;
     const email = document.getElementById('rec-email').value;
+    const wa = document.getElementById('rec-wa').value;
 
     recordings.push({
         id: Date.now(),
@@ -752,15 +790,30 @@ function handleRecordingSubmit(e) {
         time: time,
         duration: duration,
         type: type,
-        email: email
+        email: email,
+        wa: wa
     });
 
     saveData();
     closeRecordingModal();
     renderCalendar();
 
-    if(email) {
-        alert(`✅ Correo de aviso programado con éxito:\n\nPara: ${email}\nAsunto: Nueva grabación asignada\nFecha: ${date} a las ${time}\nTipo: ${type}`);
+    if(email || wa) {
+        let msg = `Nueva grabación asignada\nFecha: ${date} a las ${time}\nTipo: ${type}`;
+        if(email) {
+            fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: email, subject: 'Nueva grabación asignada', body: msg })
+            });
+        }
+        if(wa) {
+            fetch('/api/send-whatsapp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: wa, message: msg })
+            });
+        }
     }
 }
 
@@ -885,6 +938,7 @@ window.openTaskModal = function(taskId = null) {
     document.getElementById('task-modal-title').innerText = 'Nueva Tarea';
     document.getElementById('task-current-file').innerText = '';
     document.getElementById('task-email-notice').value = ''; // Added this line for reset
+    document.getElementById('task-wa-notice').value = ''; // Added this line for reset
     
     if(taskId) {
         const task = tasksList.find(t => t.id === taskId);

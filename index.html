@@ -304,10 +304,16 @@
                                                 <option value="Redes Sociales">Redes Sociales</option>
                                             </select>
                                         </div>
-                                        <div class="form-group full-width" style="margin-top: 12px;">
-                                            <label for="customer-email-notice">Email para Aviso de Bienvenida (Opcional)</label>
-                                            <input type="email" id="customer-email-notice" placeholder="cliente@ejemplo.com">
-                                            <small style="color: var(--text-secondary); font-size: 11px; margin-top: 4px;">Se simulará el envío de un correo de bienvenida al cliente.</small>
+                                        <div class="form-group full-width" style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                            <div>
+                                                <label for="customer-email-notice">Email para Aviso (Opcional)</label>
+                                                <input type="email" id="customer-email-notice" placeholder="cliente@ejemplo.com">
+                                            </div>
+                                            <div>
+                                                <label for="customer-wa-notice">WhatsApp para Aviso (Opcional)</label>
+                                                <input type="tel" id="customer-wa-notice" placeholder="34600000000">
+                                            </div>
+                                            <small style="color: var(--text-secondary); font-size: 11px; grid-column: span 2;">Se simulará el envío de un correo/mensaje de bienvenida al cliente.</small>
                                         </div>
                                     </div>
                                 </div>
@@ -569,10 +575,16 @@
                         <label for="task-due-date">Fecha Límite</label>
                         <input type="date" id="task-due-date" required>
                     </div>
-                    <div class="form-group full-width" style="grid-column: span 2; margin-top: 8px;">
-                        <label for="task-email-notice">Email para Recordatorio (Opcional)</label>
-                        <input type="email" id="task-email-notice" placeholder="responsable@ejemplo.com">
-                        <small style="color: var(--text-secondary); font-size: 11px; margin-top: 4px;">Se enviará un aviso al responsable asignado.</small>
+                    <div class="form-group full-width" style="grid-column: span 2; margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label for="task-email-notice">Email para Recordatorio</label>
+                            <input type="email" id="task-email-notice" placeholder="responsable@ejemplo.com">
+                        </div>
+                        <div>
+                            <label for="task-wa-notice">WhatsApp para Recordatorio</label>
+                            <input type="tel" id="task-wa-notice" placeholder="34600000000">
+                        </div>
+                        <small style="color: var(--text-secondary); font-size: 11px; grid-column: span 2;">Se enviará un aviso al responsable asignado por el canal elegido.</small>
                     </div>
                     <div class="form-group">
                         <label for="task-status">Estado</label>
@@ -632,11 +644,16 @@
                         <input type="text" id="rec-type" required
                             placeholder="Ej. Reel para Instagram, Video Corporativo...">
                     </div>
-                    <div class="form-group" style="margin-top: 12px;">
-                        <label for="rec-email">Avisar por Correo Electrónico (Opcional)</label>
-                        <input type="email" id="rec-email" placeholder="operador@ejemplo.com">
-                        <small style="color: var(--text-secondary); font-size: 11px; margin-top: 4px;">Si se rellena, se
-                            simulará el envío de un aviso al correo indicado.</small>
+                    <div class="form-group" style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label for="rec-email">Avisar por Email</label>
+                            <input type="email" id="rec-email" placeholder="operador@ejemplo.com">
+                        </div>
+                        <div>
+                            <label for="rec-wa">Avisar por WhatsApp</label>
+                            <input type="tel" id="rec-wa" placeholder="34600000000">
+                        </div>
+                        <small style="color: var(--text-secondary); font-size: 11px; grid-column: span 2;">Si se rellena, se simulará el envío de un aviso al contacto indicado.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
