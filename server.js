@@ -70,7 +70,7 @@ app.use(express.static(path.join(__dirname)));
         }
         try {
             const data = await resend.emails.send({
-                from: 'CRM Tonik <onboarding@resend.dev>',
+                from: 'Agencia Tonik <notificaciones@agenciatonik.com>',
                 to: [to],
                 subject: subject,
                 html: body
