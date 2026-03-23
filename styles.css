@@ -799,446 +799,314 @@ body {
     font-size: 32px;
     color: var(--accent);
 }
-.files-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-.file-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    background: var(--bg-panel-hover);
-    border-radius: 8px;
-    font-size: 13px;
-}
-.file-item i {
-    color: var(--text-secondary);
-}
-.comments-feed {
-    flex: 1;
-    background: var(--bg-panel-hover);
-    border-radius: 12px;
-    padding: 16px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-height: 250px;
-}
-.comment-bubble {
-    background: var(--bg-panel);
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    font-size: 13px;
-}
-.comment-bubble .date {
-    display: block;
-    font-size: 11px;
-    color: var(--text-secondary);
-    margin-bottom: 4px;
-}
-.add-comment-box {
-    display: flex;
-    gap: 10px;
-}
-.add-comment-box textarea {
-    flex: 1;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 12px;
-    border-radius: 10px;
-    resize: none;
-    height: 48px;
-    font-size: 13px;
-    outline: none;
-}
-.add-comment-box textarea:focus {
-    border-color: var(--accent);
-}
-
-/* Social Fields Tab */
-.social-row {
-    background: rgba(0,0,0,0.1);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-    transition: var(--transition);
-}
-.social-row:hover {
-    border-color: rgba(255,255,255,0.15);
-}
-.social-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 15px;
-    font-weight: 500;
-}
-.social-header i { font-size: 20px; }
-.social-fields {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px dashed var(--border-color);
-}
-.social-fields input {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    outline: none;
-    transition: var(--transition);
-}
-.social-fields input:focus { border-color: var(--accent); }
-
-/* Toggle Switch Styles */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-}
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #334155;
-  transition: .4s;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px; width: 18px;
-  left: 3px; bottom: 3px;
-  background-color: white;
-  transition: .4s;
-}
-input:checked + .slider { background-color: var(--accent); }
-input:checked + .slider:before { transform: translateX(20px); }
-.slider.round { border-radius: 34px; }
-.slider.round:before { border-radius: 50%; }
-
-/* Views Logic */
-.view-section {
-    display: none;
-    animation: fadeIn 0.4s ease;
-}
-.view-section.active {
-    display: block;
-}
 
 /* Calendar Styles */
 .calendar-container {
     padding: 24px;
-    margin-top: 24px;
+    background: var(--bg-panel);
+    border-radius: 12px;
 }
+
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
 }
-.calendar-header h2 {
-    font-size: 20px;
+
+.calendar-nav {
+    display: flex;
+    gap: 8px;
 }
-.calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 12px;
-    margin-bottom: 12px;
-}
-.weekday {
-    text-align: center;
-    font-weight: 600;
-    color: var(--text-secondary);
-    font-size: 13px;
-    text-transform: uppercase;
-}
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: minmax(100px, auto);
-    gap: 12px;
-}
-.calendar-day {
+
+.calendar-nav button {
     background: var(--bg-panel-hover);
-    border-radius: 12px;
-    padding: 12px;
     border: 1px solid var(--border-color);
+    color: #fff;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding-bottom: 8px;
+}
+
+.calendar-day {
+    aspect-ratio: 1/1;
+    background: var(--bg-panel-hover);
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    position: relative;
+    transition: var(--transition);
     display: flex;
     flex-direction: column;
-    min-height: 120px;
-    transition: var(--transition);
 }
-.calendar-day:hover {
-    border-color: rgba(99, 102, 241, 0.4);
-}
-.calendar-day.empty {
-    background: transparent;
-    border-color: transparent;
-}
-.calendar-day.today {
-    border-color: var(--accent);
-    background: rgba(99, 102, 241, 0.1);
-}
+
 .day-num {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    text-align: right;
-    color: var(--text-secondary);
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-size: 12px;
 }
-.calendar-day.today .day-num {
-    color: var(--accent);
-}
+
 .day-events {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
+    overflow-y: auto;
 }
+
 .recording-event {
-    background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(236, 72, 153, 0.1));
-    border-left: 3px solid #ec4899;
-    padding: 6px 8px;
+    background: var(--accent);
+    color: #fff;
+    padding: 4px 6px;
     border-radius: 6px;
-    font-size: 11px;
+    font-size: 10px;
     cursor: pointer;
-    transition: var(--transition);
     display: flex;
-    align-items: center;
-    gap: 6px;
+    flex-direction: column;
+}
+
+.event-time {
+    font-size: 9px;
+    opacity: 0.9;
+    margin-bottom: 1px;
+}
+
+.event-title {
+    font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.recording-event:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(236, 72, 153, 0.2);
-}
-.recording-event .event-time i {
-    font-size: 14px;
-    color: #ec4899;
-}
-.recording-event .event-title {
-    font-weight: 500;
+
+
+/* Chat Layout Refined */
+.chat-container {
+    display: flex;
+    height: 600px;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-/* Profile Layout */
-.profile-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-}
-.section-card {
-    margin-bottom: 24px;
-}
-.section-card h3 {
-    margin-bottom: 16px;
-    font-size: 16px;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 12px;
-}
-.sub-title {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-.notes-card {
-    height: calc(100% - 24px);
+.chat-sidebar {
+    width: 200px;
+    background: rgba(0, 0, 0, 0.1);
+    border-right: 1px solid var(--border-color);
+    padding: 24px 12px;
     display: flex;
     flex-direction: column;
 }
-.notes-flex {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+
+.chat-main {
     flex: 1;
-}
-.profile-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border-color);
+    flex-direction: column;
 }
 
-/* Chat UI Styles */
-.chat-channel {
-    padding: 10px 14px;
+.sidebar-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    padding-left: 12px;
+}
+
+.channel-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.channel-list li {
+    padding: 10px 16px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
     color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
     transition: var(--transition);
 }
-.chat-channel:hover {
-    background: rgba(255,255,255,0.05);
+
+.channel-list li:hover {
+    background: var(--bg-panel-hover);
     color: var(--text-primary);
 }
-.chat-channel.active {
-    background: rgba(99, 102, 241, 0.15);
+
+.channel-list li.active {
+    background: rgba(99, 102, 241, 0.1);
     color: var(--accent);
-    font-weight: 500;
+    font-weight: 600;
 }
+
+.chat-feed {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
 .chat-message {
     display: flex;
-    gap: 16px;
+    gap: 12px;
+    margin-bottom: 20px;
+    animation: fadeIn 0.3s ease;
 }
+
 .chat-message.self {
     flex-direction: row-reverse;
 }
+
 .chat-avatar {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(99, 102, 241, 0.2);
+    background: var(--accent);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    color: var(--accent);
     flex-shrink: 0;
 }
-.chat-bubble {
-    background: var(--bg-panel-hover);
-    padding: 12px 16px;
-    border-radius: 0 16px 16px 16px;
-    max-width: 80%;
-    font-size: 14px;
-    line-height: 1.5;
-    word-break: break-word;
-}
-.chat-message.self .chat-bubble {
-    background: var(--accent);
-    color: white;
-    border-radius: 16px 0 16px 16px;
-}
+
 .chat-meta {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 4px;
     display: flex;
     gap: 8px;
-}
-.chat-message.self .chat-meta {
-    justify-content: flex-end;
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
 }
 
-/* Kanban Board UI Styles */
+.chat-message.self .chat-meta {
+    flex-direction: row-reverse;
+}
+
+.chat-bubble {
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: var(--bg-panel-hover);
+    color: var(--text-primary);
+    max-width: 450px;
+    line-height: 1.5;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+}
+
+.chat-message.self .chat-bubble {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent-hover);
+}
+
+.chat-input-area {
+    padding: 20px;
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    gap: 12px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Kanban Styles */
 .kanban-board {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
-    align-items: start;
 }
+
 .kanban-column {
-    background: rgba(0,0,0,0.15);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
+    background: var(--bg-panel);
+    padding: 20px;
+    border-radius: 12px;
     min-height: 500px;
 }
-.kanban-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.kanban-header h3 {
+
+.kanban-column h3 {
     font-size: 15px;
-    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.kanban-badge {
-    background: var(--bg-panel-hover);
-    color: var(--text-secondary);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-}
-.kanban-cards {
-    padding: 16px;
-    flex: 1;
+
+.task-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    min-height: 100px;
 }
+
 .kanban-card {
-    background: var(--bg-panel);
+    background: var(--bg-panel-hover);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
     padding: 16px;
+    border-radius: 12px;
     cursor: grab;
     transition: var(--transition);
+    animation: fadeIn 0.3s ease;
 }
-.kanban-card:active {
-    cursor: grabbing;
-}
+
 .kanban-card:hover {
-    border-color: rgba(99, 102, 241, 0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
 }
+
 .kanban-card h4 {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
     margin-bottom: 12px;
     line-height: 1.4;
 }
+
 .task-meta {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 12px;
-    flex-wrap: wrap;
 }
+
 .task-badge {
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     text-transform: uppercase;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
 }
-.task-badge.client { background: rgba(99, 102, 241, 0.2); color: var(--accent); }
-.task-badge.date { background: rgba(255, 255, 255, 0.1); color: var(--text-secondary); }
-.priority-alta { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
-.priority-media { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
-.priority-baja { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+
+.task-badge.client { color: var(--accent); }
+.task-badge.date { color: var(--text-muted); }
+
 .kanban-card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px dashed var(--border-color);
+    border-top: 1px solid var(--border-color);
     padding-top: 12px;
+    margin-top: 4px;
 }
+
 .assignee-badge {
     display: flex;
     align-items: center;
@@ -1246,149 +1114,62 @@ input:checked + .slider:before { transform: translateX(20px); }
     font-size: 12px;
     color: var(--text-secondary);
 }
+
 .assignee-avatar {
     width: 24px;
     height: 24px;
     border-radius: 50%;
     background: var(--accent);
-    color: white;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 700;
     font-size: 10px;
-    font-weight: 600;
 }
+
+.kanban-actions {
+    display: flex;
+    gap: 8px;
+}
+
 .kanban-actions button {
     background: transparent;
     border: none;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     cursor: pointer;
     font-size: 16px;
     transition: var(--transition);
 }
+
 .kanban-actions button:hover {
-    color: #ef4444;
+    color: var(--text-primary);
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-    .sidebar { width: 80px; }
-    .logo-text, .link-name, .profile-info { display: none; }
-    .sidebar-header { justify-content: center; padding: 0; }
-    .nav-links li a { justify-content: center; padding: 12px; }
-    .profile-card { padding: 10px; justify-content: center; }
+
+.calendar-day.empty {
+    background: transparent;
+    border: none;
 }
 
-@media (max-width: 900px) {
-    .profile-layout, .kanban-board { grid-template-columns: 1fr; }
+.calendar-day.today {
+    border: 2px solid var(--accent);
+    background: rgba(99, 102, 241, 0.1);
 }
 
-@media (max-width: 768px) {
-    .app-container { flex-direction: column; }
-    
-    /* Navigation Bottom Bar instead of Sidebar */
-    .sidebar { 
-        width: 100%; 
-        height: 70px; 
-        flex-direction: row; 
-        position: fixed; 
-        bottom: 0; 
-        z-index: 100; 
-        padding: 0;
-        border-right: none;
-        border-top: 1px solid var(--border-color);
-        background: rgba(10, 12, 16, 0.95);
-        backdrop-filter: blur(12px);
-    }
-    .sidebar-header { display: none; }
-    .nav-links { 
-        flex-direction: row; 
-        justify-content: space-around; 
-        align-items: center; 
-        padding: 0;
-        margin: 0;
-        width: 100%;
-    }
-    .nav-links li { flex: 1; display: flex; justify-content: center; }
-    .nav-links li a { 
-        flex-direction: column; 
-        padding: 8px 4px;
-        gap: 4px;
-        border-radius: 8px;
-    }
-    .nav-links li a i { font-size: 24px; margin: 0; }
-    .nav-links li.active a { background: transparent; color: var(--accent); box-shadow: none; }
-    
-    .profile-card { display: none; }
-    
-    /* Main Content Adjustments */
-    .main-content {
-        height: calc(100vh - 70px);
-        margin-bottom: 70px;
-        overflow-y: auto;
-    }
-
-    .content-wrapper { padding: 16px; }
-    .topbar { padding: 16px; flex-direction: column; gap: 12px; align-items: stretch; }
-    .search-box { width: 100%; }
-    .topbar-actions { justify-content: stretch; display: flex; }
-    .topbar-actions .btn-primary { flex: 1; justify-content: center; }
-    
-    .stats-grid { grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px; }
-    
-    .section-header { flex-direction: column; gap: 12px; align-items: stretch; }
-    .filter-actions { width: 100%; flex-direction: column; gap: 8px; }
-    .filter-actions select, .filter-actions button { width: 100%; justify-content: center; }
-    
-    .table-responsive { width: 100%; overflow-x: auto; padding-bottom: 8px; }
-    .data-table th, .data-table td { white-space: nowrap; padding: 12px; }
-    
-    .form-grid { grid-template-columns: 1fr; }
-    .form-group.full-width { grid-column: span 1; }
-    
-    /* Modals & Profile View */
-    .profile-layout { flex-direction: column; gap: 16px; }
-    .modal-content { padding: 20px; width: 95%; max-height: 90vh; overflow-y: auto; }
-    
-    /* Chat View */
-    #view-chat > .glass-panel { flex-direction: column; height: calc(100vh - 120px) !important; overflow: hidden; }
-    #view-chat > .glass-panel > div:first-child { 
-        width: 100% !important; 
-        height: auto; 
-        min-height: auto;
-        border-right: none; 
-        border-bottom: 1px solid var(--border-color); 
-        padding-bottom: 8px;
-    }
-    #chat-channels-list { flex-direction: row; overflow-x: auto; padding: 8px; }
-    .chat-channel { white-space: nowrap; padding: 8px 12px; }
-    
-    /* Calendar */
-    .page-header { flex-direction: column; align-items: stretch !important; gap: 12px; }
-    .page-header button { width: 100%; justify-content: center; }
-    .calendar-container { padding: 8px; }
-    .calendar-header { margin-bottom: 12px; }
-    .calendar-header h2 { font-size: 16px; flex: 1; text-align: center; }
-    .calendar-weekdays { gap: 2px; margin-bottom: 4px; }
-    .calendar-weekdays .weekday { font-size: 10px; padding: 4px 1px; }
-    .calendar-grid { gap: 2px; grid-auto-rows: minmax(50px, auto); }
-    .calendar-day { min-height: 50px; padding: 4px 2px; border-radius: 6px; }
-    .day-num { font-size: 10px; margin-bottom: 2px; }
-    .day-events { gap: 1px; }
-    .recording-event { padding: 1px 2px; font-size: 8px; border-left-width: 2px; border-radius: 3px; }
-    .event-title { display: none; }
-    .event-time { font-size: 8px; }
-    .event-time i { display: none; }
-    
-    /* Tasks */
-    .kanban-board { flex-direction: column; gap: 24px; }
-    .kanban-column { min-width: 100%; }
+.task-priority {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.05);
 }
 
-@media (max-width: 480px) {
-    .page-header h1 { font-size: 22px; }
-    .btn-primary, .btn-secondary { font-size: 13px; padding: 10px 16px; }
-    .stat-value { font-size: 24px; }
-    
-    .login-container .glass-panel { width: 90%; padding: 24px; }
-}
+.priority-Alta { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+.priority-Media { color: #f59e0b; background: rgba(245, 158, 11, 0.1); }
+.priority-Baja { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+
+

@@ -901,6 +901,21 @@ window.switchChannel = function(channelName) {
 
     renderChat();
 };
+window.switchChannel = function(channel) {
+    currentChannel = channel;
+    
+    // Update active UI state
+    const items = document.querySelectorAll('.channel-list li');
+    items.forEach(li => {
+        if(li.innerText.toLowerCase().includes(channel)) {
+            li.classList.add('active');
+        } else {
+            li.classList.remove('active');
+        }
+    });
+    
+    renderChat();
+};
 
 function renderChat() {
     const feed = document.getElementById('chat-feed');
@@ -1131,24 +1146,24 @@ window.renderAgencyWA = function() {
     
     agencyWALinks.forEach(link => {
         const card = document.createElement('div');
-        card.className = 'glass-panel section-card';
-        card.style.padding = '20px';
-        card.style.display = 'flex';
+        card.className = 'stat-card glass-panel';
         card.style.flexDirection = 'column';
-        card.style.alignItems = 'center';
         card.style.textAlign = 'center';
+        card.style.padding = '30px 20px';
         
         card.innerHTML = `
-            <div style="background:rgba(37,211,102,0.1); width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
-                <i class='bx bxl-whatsapp' style="color:#25d366; font-size:28px;"></i>
+            <div class="stat-icon" style="background:rgba(37,211,102,0.1); color:#25d366; width:60px; height:60px; border-radius:12px; margin-bottom:15px;">
+                <i class='bx bxl-whatsapp' style="font-size:32px;"></i>
             </div>
-            <h3 style="font-size:16px; margin-bottom:5px;">${link.name}</h3>
-            <p style="color:var(--text-secondary); font-size:13px; margin-bottom:15px;">+${link.phone}</p>
-            <div style="display:flex; gap:10px; width:100%;">
+            <div class="stat-details" style="align-items:center;">
+                <span class="stat-title" style="font-size:16px; font-weight:700; color:var(--text-primary); margin-bottom:10px;">${link.name}</span>
+                <span class="stat-value" style="font-size:14px; font-weight:500; color:var(--text-secondary); margin-bottom:20px;">+${link.phone}</span>
+            </div>
+            <div style="display:flex; gap:10px; width:100%; margin-top:10px;">
                 <a href="https://wa.me/${link.phone}" target="_blank" class="btn-primary" style="flex:1; justify-content:center; background:#25d366; border:none;">
                     <i class='bx bx-message-rounded-dots'></i> Abrir Chat
                 </a>
-                <button onclick="deleteAgencyWA(${link.id})" class="btn-secondary" style="padding:10px; aspect-ratio:1/1;">
+                <button onclick="deleteAgencyWA(${link.id})" class="btn-secondary" style="padding:10px; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;">
                     <i class='bx bx-trash'></i>
                 </button>
             </div>
