@@ -90,10 +90,10 @@
                         <span class="link-name">Tareas</span>
                     </a>
                 </li>
-                <li id="nav-joseluis">
-                    <a href="#" onclick="switchView('joseluis'); return false;">
-                        <i class='bx bx-crown'></i>
-                        <span class="link-name">Jose Luis dios</span>
+                <li id="nav-whatsapp-agency">
+                    <a href="#" onclick="switchView('whatsapp-agency'); return false;">
+                        <i class='bx bxl-whatsapp'></i>
+                        <span class="link-name">WhatsApp Agencia</span>
                     </a>
                 </li>
             </ul>
@@ -534,6 +534,46 @@
 
             </div>
         </main>
+    </div>
+
+    <!-- WHATSAPP AGENCY VIEW -->
+    <div id="view-whatsapp-agency" class="view-section hidden">
+        <div class="page-header" style="margin-bottom: 24px;">
+            <div>
+                <h1>WhatsApp de la Agencia</h1>
+                <p>Gestiona y accede rápidamente a los canales oficiales de WhatsApp del equipo.</p>
+            </div>
+            <button class="btn-primary" onclick="openAgencyWAModal()"><i class='bx bx-plus'></i> Añadir Canal</button>
+        </div>
+
+        <div id="agency-wa-grid" class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+            <!-- Agency WA Cards will be injected here -->
+        </div>
+    </div>
+
+    <!-- Agency WA Modal -->
+    <div class="modal-overlay" id="agency-wa-modal">
+        <div class="modal-content glass-panel bounce-in" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Añadir Canal de WhatsApp</h2>
+                <button class="close-btn" onclick="closeAgencyWAModal()"><i class='bx bx-x'></i></button>
+            </div>
+            <form id="agency-wa-form">
+                <div class="form-group">
+                    <label for="wa-acc-name">Nombre del Canal</label>
+                    <input type="text" id="wa-acc-name" required placeholder="Ej. Soporte Técnico, Ventas...">
+                </div>
+                <div class="form-group" style="margin-top: 12px;">
+                    <label for="wa-acc-phone">Número de Teléfono</label>
+                    <input type="tel" id="wa-acc-phone" required placeholder="34600000000">
+                    <small style="color:var(--text-secondary); font-size:11px;">Incluye el código de país (ej. 34 para España).</small>
+                </div>
+                <div class="modal-footer" style="margin-top: 24px;">
+                    <button type="button" class="btn-secondary" onclick="closeAgencyWAModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Canal</button>
+                </div>
+            </form>
+        </div>
     </div>
     </div> <!-- END APP CONTAINER -->
 

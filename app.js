@@ -85,9 +85,12 @@ let teamUsers = [
 ];
 
 let tasksList = [
-    { id: 1, title: "Diseñar logo Acme Corp", assigneeId: 2, status: "todo", priority: "alta", dueDate: "2026-03-25", clientId: 1, file: null },
-    { id: 2, title: "Revisar contrato Kit Digital", assigneeId: 1, status: "in-progress", priority: "media", dueDate: "2026-03-22", clientId: 2, file: { name: "contrato_firmado.pdf" } },
     { id: 3, title: "Actualizar base de datos MySQL", assigneeId: 3, status: "done", priority: "baja", dueDate: "2026-03-20", clientId: 4, file: null }
+];
+
+let agencyWALinks = [
+    { id: 1, name: "Soporte General", phone: "34600000000" },
+    { id: 2, name: "Ventas y Consultas", phone: "34611111111" }
 ];
 
 async function loadData() {
@@ -96,6 +99,7 @@ async function loadData() {
     const sR = localStorage.getItem('crm_recordings'); if(sR) recordings = JSON.parse(sR);
     const sCh = localStorage.getItem('crm_chatMessages'); if(sCh) chatMessages = JSON.parse(sCh);
     const sT = localStorage.getItem('crm_tasksList'); if(sT) tasksList = JSON.parse(sT);
+    const sWA = localStorage.getItem('crm_agencyWALinks'); if(sWA) agencyWALinks = JSON.parse(sWA);
 
     // 2. Intentar cargar del servidor (SQLite) si está disponible
     try {
@@ -111,6 +115,7 @@ async function loadData() {
             if (data.recordings) recordings = data.recordings;
             if (data.chatMessages) chatMessages = data.chatMessages;
             if (data.tasksList) tasksList = data.tasksList;
+            if (data.agencyWALinks) agencyWALinks = data.agencyWALinks;
             
             // Sincronizar LocalStorage con los datos frescos del servidor
             saveToLocalStorage();
@@ -125,6 +130,7 @@ function saveToLocalStorage() {
     localStorage.setItem('crm_recordings', JSON.stringify(recordings));
     localStorage.setItem('crm_chatMessages', JSON.stringify(chatMessages));
     localStorage.setItem('crm_tasksList', JSON.stringify(tasksList));
+    localStorage.setItem('crm_agencyWALinks', JSON.stringify(agencyWALinks));
 }
 
 async function saveData() {
@@ -137,7 +143,8 @@ async function saveData() {
             { key: 'crm_customers', data: customers },
             { key: 'crm_recordings', data: recordings },
             { key: 'crm_chatMessages', data: chatMessages },
-            { key: 'crm_tasksList', data: tasksList }
+            { key: 'crm_tasksList', data: tasksList },
+            { key: 'crm_agencyWALinks', data: agencyWALinks }
         ];
 
         for (const item of syncKeys) {
@@ -236,6 +243,8 @@ function switchView(viewName) {
         renderChat();
     } else if (viewName === 'tasks') {
         renderTasks();
+    } else if (viewName === 'whatsapp-agency') {
+        renderAgencyWA();
     }
 }
 
@@ -398,7 +407,8 @@ function setupEventListeners() {
                         dueDate: dueDate,
                         status: status,
                         file: fileObj,
-                        emailNotice: emailNotice
+                        emailNotice: emailNotice,
+                        waNotice: waNotice
                     };
                 }
             } else {
@@ -412,7 +422,8 @@ function setupEventListeners() {
                     dueDate: dueDate,
                     status: status,
                     file: fileObj,
-                    emailNotice: emailNotice
+                    emailNotice: emailNotice,
+                    waNotice: waNotice
                 });
             }
 
@@ -440,6 +451,26 @@ function setupEventListeners() {
                     });
                 }
             }
+        });
+    }
+
+    // Agency WhatsApp form
+    const agencyWAForm = document.getElementById('agency-wa-form');
+    if(agencyWAForm) {
+        agencyWAForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('wa-acc-name').value;
+            const phone = document.getElementById('wa-acc-phone').value.replace(/\+/g, '').replace(/\s/g, '');
+            
+            agencyWALinks.push({
+                id: Date.now(),
+                name: name,
+                phone: phone
+            });
+            
+            saveData();
+            closeAgencyWAModal();
+            renderAgencyWA();
         });
     }
 }
@@ -1026,3 +1057,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadData();
     init();
 });
+
+// --- AGENCY WHATSAPP FUNCTIONS ---
+window.renderAgencyWA = function() {
+    const grid = document.getElementById('agency-wa-grid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    
+    agencyWALinks.forEach(link => {
+        const card = document.createElement('div');
+        card.className = 'glass-panel section-card';
+        card.style.padding = '20px';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.alignItems = 'center';
+        card.style.textAlign = 'center';
+        
+        card.innerHTML = `
+            <div style="background:rgba(37,211,102,0.1); width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                <i class='bx bxl-whatsapp' style="color:#25d366; font-size:28px;"></i>
+            </div>
+            <h3 style="font-size:16px; margin-bottom:5px;">${link.name}</h3>
+            <p style="color:var(--text-secondary); font-size:13px; margin-bottom:15px;">+${link.phone}</p>
+            <div style="display:flex; gap:10px; width:100%;">
+                <a href="https://wa.me/${link.phone}" target="_blank" class="btn-primary" style="flex:1; justify-content:center; background:#25d366; border:none;">
+                    <i class='bx bx-message-rounded-dots'></i> Abrir Chat
+                </a>
+                <button onclick="deleteAgencyWA(${link.id})" class="btn-secondary" style="padding:10px; aspect-ratio:1/1;">
+                    <i class='bx bx-trash'></i>
+                </button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+window.openAgencyWAModal = function() {
+    document.getElementById('agency-wa-form').reset();
+    document.getElementById('agency-wa-modal').classList.add('active');
+}
+
+window.closeAgencyWAModal = function() {
+    document.getElementById('agency-wa-modal').classList.remove('active');
+}
+
+window.deleteAgencyWA = function(id) {
+    if(confirm('¿Deseas eliminar este canal de WhatsApp?')) {
+        agencyWALinks = agencyWALinks.filter(link => link.id !== id);
+        saveData();
+        renderAgencyWA();
+    }
+}
