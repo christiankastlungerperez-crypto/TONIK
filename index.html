@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <div class="app-container" style="display: none;">
+    <div class="app-container" id="app-container" style="display: none;">
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
@@ -90,7 +90,12 @@
                         <span class="link-name">Tareas</span>
                     </a>
                 </li>
-
+                <li id="nav-joseluis">
+                    <a href="#" onclick="switchView('joseluis'); return false;">
+                        <i class='bx bx-crown'></i>
+                        <span class="link-name">Jose Luis dios</span>
+                    </a>
+                </li>
             </ul>
             <div class="profile-card">
                 <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" alt="profile"
@@ -616,7 +621,8 @@
                     <div class="form-group" style="margin-top: 12px;">
                         <label for="rec-email">Avisar por Correo Electrónico (Opcional)</label>
                         <input type="email" id="rec-email" placeholder="operador@ejemplo.com">
-                        <small style="color: var(--text-secondary); font-size: 11px; margin-top: 4px;">Si se rellena, se simulará el envío de un aviso al correo indicado.</small>
+                        <small style="color: var(--text-secondary); font-size: 11px; margin-top: 4px;">Si se rellena, se
+                            simulará el envío de un aviso al correo indicado.</small>
                     </div>
                 </div>
                 <div class="modal-footer">
