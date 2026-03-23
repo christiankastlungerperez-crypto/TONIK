@@ -543,7 +543,12 @@
                 <h1>WhatsApp de la Agencia</h1>
                 <p>Gestiona y accede rápidamente a los canales oficiales de WhatsApp del equipo.</p>
             </div>
-            <button class="btn-primary" onclick="openAgencyWAModal()"><i class='bx bx-plus'></i> Añadir Canal</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-secondary" onclick="testEmailConnection()" style="border-color: var(--accent); color: var(--accent);">
+                    <i class='bx bx-mail-send'></i> Probar Email
+                </button>
+                <button class="btn-primary" onclick="openAgencyWAModal()"><i class='bx bx-plus'></i> Añadir Canal</button>
+            </div>
         </div>
 
         <div id="agency-wa-grid" class="form-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">

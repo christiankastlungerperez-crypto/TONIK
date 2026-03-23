@@ -62,19 +62,29 @@ app.use(express.static(path.join(__dirname)));
     // --- NUEVOS ENDPOINTS DE NOTIFICACIÓN ---
     app.post('/api/send-email', async (req, res) => {
         const { to, subject, body } = req.body;
+        console.log(`📩 [Resend] Intentando enviar email a: ${to}...`);
+        
         if (!resend) {
-            console.warn("⚠️ Email simulado (Falta RESEND_API_KEY)");
-            return res.json({ success: true, simulated: true });
+            console.warn("⚠️ ERROR: RESEND_API_KEY no encontrada en el .env");
+            return res.status(500).json({ success: false, error: "Servidor: Falta API Key en el archivo .env" });
         }
         try {
-            await resend.emails.send({
+            const data = await resend.emails.send({
                 from: 'CRM Tonik <onboarding@resend.dev>',
                 to: [to],
                 subject: subject,
                 html: body
             });
-            res.json({ success: true });
+            
+            if (data.error) {
+                console.error("❌ ERROR API Resend:", data.error);
+                return res.status(400).json({ success: false, error: data.error.message });
+            }
+            
+            console.log("✅ Email enviado con éxito:", data.id);
+            res.json({ success: true, id: data.id });
         } catch (e) {
+            console.error("❌ ERROR FATAL Servidor:", e.message);
             res.status(500).json({ error: e.message });
         }
     });

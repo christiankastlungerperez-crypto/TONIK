@@ -1089,6 +1089,34 @@ window.exportCustomersToCSV = function() {
     document.body.removeChild(link);
 };
 
+window.testEmailConnection = async function() {
+    const userEmail = prompt("Introduce tu email de registro en Resend para el test:", "admin@agenciatonik.com");
+    if(!userEmail) return;
+
+    alert("Iniciando test... Ten paciencia y no cierres hasta recibir respuesta.");
+
+    try {
+        const res = await fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                to: userEmail, 
+                subject: 'Test de Conexión CRM', 
+                body: '<h1>¡Funciona!</h1><p>Si recibes esto, tu clave de Resend es correcta y el servidor está bien configurado.</p>' 
+            })
+        });
+        
+        const data = await res.json();
+        if(res.ok && data.success) {
+            alert("✅ ¡ÉXITO! El email se ha enviado. Revisa tu bandeja de entrada (y SPAM).");
+        } else {
+            alert("❌ ERROR: " + (data.error || "Error desconocido en el servidor"));
+        }
+    } catch (e) {
+        alert("❌ ERROR DE CONEXIÓN: Asegúrate de que el servidor (node server.js) esté arrancado.");
+    }
+};
+
 // Start app
 document.addEventListener('DOMContentLoaded', async () => {
     await loadData();
