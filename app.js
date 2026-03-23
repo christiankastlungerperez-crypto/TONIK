@@ -78,10 +78,12 @@ let chatMessages = [
 ];
 
 let teamUsers = [
-    { id: 1, name: "Admin User", initials: "AU", username: "admin", pass: "admin123", role: "admin" },
-    { id: 2, name: "Pablo M.", initials: "PM", username: "pablo", pass: "pablo123", role: "user" },
-    { id: 3, name: "Sara L.", initials: "SL", username: "sara", pass: "sara123", role: "user" },
-    { id: 4, name: "Alex V.", initials: "AV", username: "alex", pass: "alex123", role: "user" }
+    { id: 1, name: "Admin", initials: "AD", username: "admin", pass: "Admintonik2025-", role: "admin", email: "admin@agenciatonik.com" },
+    { id: 2, name: "Juanjo", initials: "JJ", username: "juanjo@agenciatonik.com", pass: "juanjo123", role: "user", email: "juanjo@agenciatonik.com" },
+    { id: 3, name: "Ismael", initials: "IS", username: "ismael@agenciatonik.com", pass: "ismael123", role: "user", email: "ismael@agenciatonik.com" },
+    { id: 4, name: "Grecia", initials: "GR", username: "grecia@agenciatonik.com", pass: "grecia123", role: "user", email: "grecia@agenciatonik.com" },
+    { id: 5, name: "Mirela", initials: "MI", username: "mirela@agenciatonik.com", pass: "mirela123", role: "user", email: "mirela@agenciatonik.com" },
+    { id: 6, name: "Luis", initials: "LU", username: "luis@agenciatonik.com", pass: "luis123", role: "user", email: "luis@agenciatonik.com" }
 ];
 
 let tasksList = [
@@ -795,8 +797,13 @@ function nextMonth() {
 }
 
 function openRecordingModal() {
-    const sel = document.getElementById('rec-client');
-    sel.innerHTML = customers.map(c => `<option value="${c.id}">${c.name} (${c.company})</option>`).join('');
+    const selClient = document.getElementById('rec-client');
+    selClient.innerHTML = customers.map(c => `<option value="${c.id}">${c.name} (${c.company})</option>`).join('');
+    
+    const selAssignee = document.getElementById('rec-assignee');
+    selAssignee.innerHTML = '<option value="" disabled selected>Selecciona un responsable</option>' + 
+                            teamUsers.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+                            
     document.getElementById('recording-form').reset();
     document.getElementById('recording-modal').classList.add('active');
 }
@@ -811,38 +818,68 @@ function handleRecordingSubmit(e) {
     const time = document.getElementById('rec-time').value;
     const duration = document.getElementById('rec-duration').value;
     const type = document.getElementById('rec-type').value;
-    const email = document.getElementById('rec-email').value;
+    const assigneeId = document.getElementById('rec-assignee').value;
+    const emailExtra = document.getElementById('rec-email').value;
     const wa = document.getElementById('rec-wa').value;
 
-    recordings.push({
-        id: Date.now(),
+    const recordingId = Date.now();
+    const newRecording = {
+        id: recordingId,
         customerId: parseInt(customerId),
         date: date,
         time: time,
         duration: duration,
         type: type,
-        email: email,
+        assigneeId: parseInt(assigneeId),
+        email: emailExtra,
         wa: wa
-    });
+    };
+
+    recordings.push(newRecording);
 
     saveData();
     closeRecordingModal();
     renderCalendar();
 
-    if(email || wa) {
-        let msg = `Nueva grabación asignada\nFecha: ${date} a las ${time}\nTipo: ${type}`;
-        if(email) {
+    // Notificar al Responsable
+    const responsible = teamUsers.find(u => u.id === parseInt(assigneeId));
+    if(responsible && responsible.email) {
+        let msg = `<h3>Nueva grabación asignada</h3>
+                   <p>Hola <strong>${responsible.name}</strong>,</p>
+                   <p>Se te ha asignado una nueva grabación en el CRM:</p>
+                   <ul>
+                       <li><strong>Fecha:</strong> ${date}</li>
+                       <li><strong>Hora:</strong> ${time}</li>
+                       <li><strong>Duración:</strong> ${duration}h</li>
+                       <li><strong>Tipo:</strong> ${type}</li>
+                   </ul>`;
+                   
+        fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                to: responsible.email, 
+                subject: `Confirmación de Grabación: ${date}`, 
+                body: msg 
+            })
+        });
+    }
+
+    // Notificaciones extra (Manuales)
+    if(emailExtra || wa) {
+        let plainMsg = `Nueva grabación asignada\nFecha: ${date} a las ${time}\nTipo: ${type}`;
+        if(emailExtra) {
             fetch('/api/send-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to: email, subject: 'Nueva grabación asignada', body: msg })
+                body: JSON.stringify({ to: emailExtra, subject: 'Aviso de grabación', body: plainMsg })
             });
         }
         if(wa) {
             fetch('/api/send-whatsapp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ to: wa, message: msg })
+                body: JSON.stringify({ to: wa, message: plainMsg })
             });
         }
     }
