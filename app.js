@@ -330,7 +330,7 @@ function setupEventListeners() {
             const dueDate = document.getElementById('task-due-date').value;
             const status = document.getElementById('task-status').value;
             const editId = document.getElementById('edit-task-id').value;
-            const fileInput = document.getElementById('task-file');
+            const emailNotice = document.getElementById('task-email-notice').value;
             
             let fileObj = null;
             if(fileInput.files.length > 0) {
@@ -353,7 +353,8 @@ function setupEventListeners() {
                         priority: priority,
                         dueDate: dueDate,
                         status: status,
-                        file: fileObj
+                        file: fileObj,
+                        emailNotice: emailNotice
                     };
                 }
             } else {
@@ -366,13 +367,20 @@ function setupEventListeners() {
                     priority: priority,
                     dueDate: dueDate,
                     status: status,
-                    file: fileObj
+                    file: fileObj,
+                    emailNotice: emailNotice
                 });
             }
 
             closeTaskModal();
             saveData();
             renderTasks();
+
+            if(emailNotice) {
+                const assignee = teamUsers.find(u => u.id === parseInt(assigneeId));
+                const assigneeName = assignee ? assignee.name : 'Responsable';
+                alert(`📧 Recordatorio de Tarea programado:\n\nPara: ${emailNotice}\nResponsable: ${assigneeName}\nTarea: ${title}\nFecha Límite: ${dueDate}`);
+            }
         });
     }
 }
@@ -460,6 +468,7 @@ function openCustomerView(customer = null) {
 
         notesWarning.classList.remove('hidden');
         notesSection.classList.add('hidden');
+        document.getElementById('customer-email-notice').value = '';
     }
     
     switchView('customer');
@@ -499,8 +508,11 @@ function handleFormSubmit(e) {
             }
         },
         comments: existingCustomer ? existingCustomer.comments : [],
-        files: existingCustomer ? existingCustomer.files : []
+        files: existingCustomer ? existingCustomer.files : [],
+        emailNotice: emailNotice
     };
+
+    const emailNotice = document.getElementById('customer-email-notice').value;
 
     if (id) {
         // Edit
@@ -516,6 +528,10 @@ function handleFormSubmit(e) {
     updateStats();
     // Re-apply filters before rendering
     filterData();
+
+    if(!id && emailNotice) {
+        alert(`📧 Email de Bienvenida programado:\n\nPara: ${emailNotice}\nCliente: ${newCustomer.name}\nEmpresa: ${newCustomer.company}\nServicio: ${newCustomer.service}`);
+    }
 }
 
 // Logic for Notes, Files and Socials
@@ -830,6 +846,7 @@ window.openTaskModal = function(taskId = null) {
     document.getElementById('edit-task-id').value = '';
     document.getElementById('task-modal-title').innerText = 'Nueva Tarea';
     document.getElementById('task-current-file').innerText = '';
+    document.getElementById('task-email-notice').value = ''; // Added this line for reset
     
     if(taskId) {
         const task = tasksList.find(t => t.id === taskId);
@@ -842,6 +859,7 @@ window.openTaskModal = function(taskId = null) {
             document.getElementById('task-priority').value = task.priority;
             document.getElementById('task-due-date').value = task.dueDate || '';
             document.getElementById('task-status').value = task.status;
+            document.getElementById('task-email-notice').value = task.emailNotice || ''; // Added this line for editing
             if(task.file) {
                 document.getElementById('task-current-file').innerText = `Archivo actual: ${task.file.name}`;
             }

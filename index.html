@@ -296,9 +296,18 @@
                                         <div class="form-group full-width">
                                             <label for="service">Servicio Principal</label>
                                             <select id="service" required>
-                                                <option value="Desarrollo Web">Desarrollo Web</option>
+                                                <option value="" disabled selected>Seleccionar servicio</option>
+                                                <option value="Branding">Branding</option>
+                                                <option value="Web Design">Web Design</option>
+                                                <option value="Social Media">Social Media</option>
+                                                <option value="Video Production">Video Production</option>
                                                 <option value="Redes Sociales">Redes Sociales</option>
                                             </select>
+                                        </div>
+                                        <div class="form-group full-width" style="margin-top: 12px;">
+                                            <label for="customer-email-notice">Email para Aviso de Bienvenida (Opcional)</label>
+                                            <input type="email" id="customer-email-notice" placeholder="cliente@ejemplo.com">
+                                            <small style="color: var(--text-secondary); font-size: 11px; margin-top: 4px;">Se simulará el envío de un correo de bienvenida al cliente.</small>
                                         </div>
                                     </div>
                                 </div>
@@ -559,6 +568,11 @@
                     <div class="form-group">
                         <label for="task-due-date">Fecha Límite</label>
                         <input type="date" id="task-due-date" required>
+                    </div>
+                    <div class="form-group full-width" style="grid-column: span 2; margin-top: 8px;">
+                        <label for="task-email-notice">Email para Recordatorio (Opcional)</label>
+                        <input type="email" id="task-email-notice" placeholder="responsable@ejemplo.com">
+                        <small style="color: var(--text-secondary); font-size: 11px; margin-top: 4px;">Se enviará un aviso al responsable asignado.</small>
                     </div>
                     <div class="form-group">
                         <label for="task-status">Estado</label>
