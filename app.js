@@ -91,8 +91,8 @@ let tasksList = [
 ];
 
 let agencyWALinks = [
-    { id: 1, name: "Soporte General", phone: "34600000000" },
-    { id: 2, name: "Ventas y Consultas", phone: "34611111111" }
+    { id: 1, name: "Agencia Tonik - General", phone: "34600000000" },
+    { id: 2, name: "Consultas y Ventas", phone: "34611111111" }
 ];
 
 async function loadData() {
