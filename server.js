@@ -1,0 +1,62 @@
+const express = require('express');
+const cors = require('cors');
+const setupDB = require('./database');
+const path = require('path');
+
+const app = express();
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+
+// Servimos index.html y el resto de recursos gráficso
+app.use(express.static(path.join(__dirname)));
+
+// Función autoejecutable para iniciar SQLite antes de abrir Express
+(async () => {
+    const db = await setupDB();
+
+    app.get('/api/data', async (req, res) => {
+        try {
+            const rows = await db.all("SELECT key_name, data_json FROM app_state");
+            let responseData = {
+                customers: null,
+                recordings: null,
+                chatMessages: null,
+                tasksList: null
+            };
+            
+            rows.forEach(r => {
+                if (r.key_name === 'crm_customers') responseData.customers = JSON.parse(r.data_json);
+                if (r.key_name === 'crm_recordings') responseData.recordings = JSON.parse(r.data_json);
+                if (r.key_name === 'crm_chatMessages') responseData.chatMessages = JSON.parse(r.data_json);
+                if (r.key_name === 'crm_tasksList') responseData.tasksList = JSON.parse(r.data_json);
+            });
+
+            res.json(responseData);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error leyendo de la base de datos local' });
+        }
+    });
+
+    app.post('/api/save', async (req, res) => {
+        const { key, data } = req.body;
+        const jsonStr = JSON.stringify(data);
+
+        try {
+            await db.run(
+                `INSERT INTO app_state (key_name, data_json) VALUES (?, ?) 
+                 ON CONFLICT(key_name) DO UPDATE SET data_json = excluded.data_json`,
+                [key, jsonStr]
+            );
+            res.json({ success: true });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Error guardando en la BBDD SQLite' });
+        }
+    });
+
+    const PORT = 3000;
+    app.listen(PORT, () => {
+        console.log(`🚀 Servidor CRM y Base de Datos corriendo en http://localhost:${PORT}`);
+    });
+})();

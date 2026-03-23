@@ -91,26 +91,64 @@ let tasksList = [
 ];
 
 async function loadData() {
+    // 1. Cargar de LocalStorage primero (Respaldo inmediato)
+    const sC = localStorage.getItem('crm_customers'); if(sC) customers = JSON.parse(sC);
+    const sR = localStorage.getItem('crm_recordings'); if(sR) recordings = JSON.parse(sR);
+    const sCh = localStorage.getItem('crm_chatMessages'); if(sCh) chatMessages = JSON.parse(sCh);
+    const sT = localStorage.getItem('crm_tasksList'); if(sT) tasksList = JSON.parse(sT);
+
+    // 2. Intentar cargar del servidor (SQLite) si está disponible
     try {
-        const res = await fetch('http://localhost:3000/api/data');
-        const data = await res.json();
-        if (data.customers) customers = data.customers;
-        if (data.recordings) recordings = data.recordings;
-        if (data.chatMessages) chatMessages = data.chatMessages;
-        if (data.tasksList) tasksList = data.tasksList;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 segundos de timeout
+        
+        const res = await fetch('/api/data', { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        if (res.ok) {
+            const data = await res.json();
+            if (data.customers) customers = data.customers;
+            if (data.recordings) recordings = data.recordings;
+            if (data.chatMessages) chatMessages = data.chatMessages;
+            if (data.tasksList) tasksList = data.tasksList;
+            
+            // Sincronizar LocalStorage con los datos frescos del servidor
+            saveToLocalStorage();
+        }
     } catch(e) {
-        console.error("No se pudo conectar a la base de datos (SQLite / Node). Asegúrate de tener el servidor encendido.", e);
+        console.warn("Servidor SQLite no detectado o fuera de línea. Usando LocalStorage.");
     }
 }
 
+function saveToLocalStorage() {
+    localStorage.setItem('crm_customers', JSON.stringify(customers));
+    localStorage.setItem('crm_recordings', JSON.stringify(recordings));
+    localStorage.setItem('crm_chatMessages', JSON.stringify(chatMessages));
+    localStorage.setItem('crm_tasksList', JSON.stringify(tasksList));
+}
+
 async function saveData() {
+    // Guardado local SIEMPRE
+    saveToLocalStorage();
+
+    // Sincronización con el servidor
     try {
-        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_customers', data: customers }) });
-        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_recordings', data: recordings }) });
-        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_chatMessages', data: chatMessages }) });
-        await fetch('http://localhost:3000/api/save', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ key: 'crm_tasksList', data: tasksList }) });
+        const syncKeys = [
+            { key: 'crm_customers', data: customers },
+            { key: 'crm_recordings', data: recordings },
+            { key: 'crm_chatMessages', data: chatMessages },
+            { key: 'crm_tasksList', data: tasksList }
+        ];
+
+        for (const item of syncKeys) {
+            await fetch('/api/save', { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify(item) 
+            });
+        }
     } catch(e) {
-        console.error("Error al guardar en base de datos SQLite.", e);
+        // Silencioso
     }
 }
 
